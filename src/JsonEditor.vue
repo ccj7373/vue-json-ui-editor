@@ -70,9 +70,11 @@ export default {
     };
   },
   created() {
+
     loadFields(this, deepClone(this.schema));
     this.default = deepClone(this.value);
     this.data = this.value;
+
   },
   render(createElement) {
     const nodes = [];
@@ -103,7 +105,7 @@ export default {
       }
 
       if (Object.keys(fields).length) {
-        Object.keys(fields).forEach(key => {
+        Object.keys(fields).forEach((key) => {
           const formNodes = [];
           if (key.indexOf('$') === 0) return;
           const field = fields[key];
@@ -132,7 +134,7 @@ export default {
               value: fieldValue,
             },
             on: {
-              input: event => {
+              input: (event) => {
                 const value = event && event.target ? event.target.value : event;
                 const ns = fieldName.split('.');
                 const n = ns.pop();
@@ -155,19 +157,23 @@ export default {
             }
             break;
           case 'radio':
+            if (field.hasOwnProperty('items')) {
+              field.items.forEach((item) => {
+                const itemOptions = this.elementOptions(components[field.type], { value: this.data[field.name], label: item.value }, item, item);
+                children.push(createElement(components[field.type].component, itemOptions, item.label));
+              });
+            }
+            break;
           case 'checkbox':
             if (field.hasOwnProperty('items')) {
-              field.items.forEach(item => {
-                const itemOptions = this.elementOptions(components[field.type], item, item, item);
+              field.items.forEach((item) => {
+                const itemOptions = this.elementOptions(components[field.type], { value: this.data[field.name], label: item.value }, item, item);
                 children.push(createElement(components[field.type].component, itemOptions, item.label));
               });
             }
             break;
           case 'select':
-            if (!field.required) {
-              children.push(createElement(components.option.component));
-            }
-            field.items.forEach(option => {
+            field.items.forEach((option) => {
               const optionOptions = this.elementOptions(
                 components.option,
                 {
@@ -233,7 +239,7 @@ export default {
               )
             );
           } else {
-            formControlsNodes.forEach(node => formNodes.push(node));
+            formControlsNodes.forEach((node) => formNodes.push(node));
           }
           node[key] = formNodes[0];
         });
@@ -255,7 +261,7 @@ export default {
           )
         );
       }
-      Object.keys(fields).forEach(key => {
+      Object.keys(fields).forEach((key) => {
         if (key.indexOf('$') === 0) return;
         const field = fields[key];
         if (field.$sub) {
@@ -301,7 +307,7 @@ export default {
         {
           ref: '__form',
           on: {
-            submit: event => {
+            submit: (event) => {
               event.stopPropagation();
               this.submit(event);
             },
@@ -385,7 +391,7 @@ export default {
         const n = ns.pop();
         const ret = ns.length > 0 ? initChild(this.data, ns) : this.data;
         const value = getChild(this.default, key.split('.'));
-        this.$set(ret, n, value);
+        this.$set(ret, n, deepClone(value));
       }
     },
     /**

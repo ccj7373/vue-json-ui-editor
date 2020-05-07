@@ -35,39 +35,9 @@ import { Option } from 'element-ui';
 
 JsonEditor.setComponent('form', 'el-form', ({ vm }) => {
   // vm is the JsonEditor VM
-
-  const labelWidth = '120px';
+  const labelWidth = '100px';
   const model = vm.data;
   const rules = {};
-
-  function parseField(fields) {
-    Object.keys(fields).forEach(key => {
-      if (key.indexOf('$') === 0 && key !== '$sub') return;
-      const field = fields[key];
-      if (field.$sub) {
-        return parseField(field);
-      }
-      if (!field.name) return;
-      rules[field.name] = [];
-      // http://element.eleme.io/#/en-US/component/form#validation
-      const type = field.schemaType === 'array' && field.type === 'radio' ? 'string' : field.schemaType;
-      const required = field.required;
-      const message = field.title;
-      const trigger = ['radio', 'checkbox', 'select'].includes(field.type) ? 'change' : 'blur';
-      rules[field.name].push({ type, required, message, trigger });
-
-      if (field.minlength !== undefined || field.maxlength !== undefined) {
-        const max = field.maxlength || 255;
-        const min = field.minlength || 0;
-        const msg = `Length must between ${ min } and ${ max }`;
-        rules[field.name].push({ min, max, message: msg, trigger });
-      }
-    });
-  }
-
-  parseField(vm.fields);
-
-  // returning the form props
   return { labelWidth, rules, model };
 });
 
@@ -111,10 +81,25 @@ export default {
   data: () => ({
     schema: require('@/schema/newsletter'),
     model: {
-      name: 'Yourtion',
-      sub: {
-        sEmail: 'yourtion@gmail.com',
+      'name': 'Yourtion',
+      'sub': {
+        'sEmail': 'yourtion@gmail.com',
+        'sName': '1',
+        'sUrl': '2',
+        'sub2': {
+          'sName2': '1',
+          'sAge': 2,
+        },
       },
+      'lists': 'Promotion',
+      'lists2': [
+        'promotion',
+      ],
+      'lists3': 'daily',
+      'source': '111',
+      'rate': 4.5,
+      'color': '#384554',
+      'agree': true,
     },
   }),
   computed: {
